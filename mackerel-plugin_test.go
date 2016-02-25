@@ -145,8 +145,8 @@ func ExampleFormatValues() {
 	var mp MackerelPlugin
 	prefix := "foo"
 	metric := Metrics{Name: "cmd_get", Label: "Get", Diff: true, Type: "uint64"}
-	stat := map[string]interface{}{"cmd_get": uint64(1000)}
-	lastStat := map[string]interface{}{"cmd_get": uint64(500), ".last_diff.cmd_get": 300.0}
+	stat := map[string]interface{}{"foo.cmd_get": uint64(1000)}
+	lastStat := map[string]interface{}{"foo.cmd_get": uint64(500), ".last_diff.foo.cmd_get": 300.0}
 	now := time.Unix(1437227240, 0)
 	lastTime := now.Add(-time.Duration(60) * time.Second)
 	mp.formatValues(prefix, metric, &stat, &lastStat, now, lastTime)
@@ -159,8 +159,8 @@ func ExampleFormatValuesWithCounterReset() {
 	var mp MackerelPlugin
 	prefix := "foo"
 	metric := Metrics{Name: "cmd_get", Label: "Get", Diff: true, Type: "uint64"}
-	stat := map[string]interface{}{"cmd_get": uint64(10)}
-	lastStat := map[string]interface{}{"cmd_get": uint64(500), ".last_diff.cmd_get": 300.0}
+	stat := map[string]interface{}{"foo.cmd_get": uint64(10)}
+	lastStat := map[string]interface{}{"foo.cmd_get": uint64(500), ".last_diff.foo.cmd_get": 300.0}
 	now := time.Unix(1437227240, 0)
 	lastTime := now.Add(-time.Duration(60) * time.Second)
 	mp.formatValues(prefix, metric, &stat, &lastStat, now, lastTime)
@@ -185,8 +185,8 @@ func ExampleFormatValuesWithOverflow() {
 	var mp MackerelPlugin
 	prefix := "foo"
 	metric := Metrics{Name: "cmd_get", Label: "Get", Diff: true, Type: "uint64"}
-	stat := map[string]interface{}{"cmd_get": uint64(500)}
-	lastStat := map[string]interface{}{"cmd_get": uint64(math.MaxUint64 - 100), ".last_diff.cmd_get": float64(100.0)}
+	stat := map[string]interface{}{"foo.cmd_get": uint64(500)}
+	lastStat := map[string]interface{}{"foo.cmd_get": uint64(math.MaxUint64 - 100), ".last_diff.foo.cmd_get": float64(100.0)}
 	now := time.Unix(1437227240, 0)
 	lastTime := now.Add(-time.Duration(60) * time.Second)
 	mp.formatValues(prefix, metric, &stat, &lastStat, now, lastTime)
@@ -199,8 +199,8 @@ func ExampleFormatValuesWithOverflowAndTooHighDifference() {
 	var mp MackerelPlugin
 	prefix := "foo"
 	metric := Metrics{Name: "cmd_get", Label: "Get", Diff: true, Type: "uint64"}
-	stat := map[string]interface{}{"cmd_get": uint64(500)}
-	lastStat := map[string]interface{}{"cmd_get": uint64(math.MaxUint64 - 100), ".last_diff.cmd_get": float64(10.0)}
+	stat := map[string]interface{}{"foo.cmd_get": uint64(500)}
+	lastStat := map[string]interface{}{"foo.cmd_get": uint64(math.MaxUint64 - 100), ".last_diff.foo.cmd_get": float64(10.0)}
 	now := time.Unix(1437227240, 0)
 	lastTime := now.Add(-time.Duration(60) * time.Second)
 	mp.formatValues(prefix, metric, &stat, &lastStat, now, lastTime)
@@ -212,8 +212,8 @@ func ExampleFormatValuesWithOverflowAndNoLastDiff() {
 	var mp MackerelPlugin
 	prefix := "foo"
 	metric := Metrics{Name: "cmd_get", Label: "Get", Diff: true, Type: "uint64"}
-	stat := map[string]interface{}{"cmd_get": uint64(500)}
-	lastStat := map[string]interface{}{"cmd_get": uint64(math.MaxUint64 - 100)}
+	stat := map[string]interface{}{"foo.cmd_get": uint64(500)}
+	lastStat := map[string]interface{}{"foo.cmd_get": uint64(math.MaxUint64 - 100)}
 	now := time.Unix(1437227240, 0)
 	lastTime := now.Add(-time.Duration(60) * time.Second)
 	mp.formatValues(prefix, metric, &stat, &lastStat, now, lastTime)

@@ -151,7 +151,14 @@ func (h *MackerelPlugin) Tempfilename() string {
 }
 
 func (h *MackerelPlugin) formatValues(prefix string, metric Metrics, stat *map[string]interface{}, lastStat *map[string]interface{}, now time.Time, lastTime time.Time) {
-	value, ok := (*stat)[metric.Name]
+	var fullMetricName string
+	if len(prefix) > 0 {
+		fullMetricName = prefix + "." + metric.Name
+	} else {
+		fullMetricName = metric.Name
+	}
+
+	value, ok := (*stat)[fullMetricName]
 	if !ok || value == nil {
 		return
 	}
@@ -169,29 +176,29 @@ func (h *MackerelPlugin) formatValues(prefix string, metric Metrics, stat *map[s
 	}
 
 	if metric.Diff {
-		_, ok := (*lastStat)[metric.Name]
+		lastValue, ok := (*lastStat)[fullMetricName]
 		if ok {
 			var lastDiff float64
-			if (*lastStat)[".last_diff."+metric.Name] != nil {
-				lastDiff = toFloat64((*lastStat)[".last_diff."+metric.Name])
+			if v := (*lastStat)[".last_diff."+fullMetricName]; v != nil {
+				lastDiff = toFloat64(v)
 			}
 			var err error
 			switch metric.Type {
 			case "uint32":
-				value, err = h.calcDiffUint32(toUint32(value), now, toUint32((*lastStat)[metric.Name]), lastTime, lastDiff)
+				value, err = h.calcDiffUint32(toUint32(value), now, toUint32(lastValue), lastTime, lastDiff)
 			case "uint64":
-				value, err = h.calcDiffUint64(toUint64(value), now, toUint64((*lastStat)[metric.Name]), lastTime, lastDiff)
+				value, err = h.calcDiffUint64(toUint64(value), now, toUint64(lastValue), lastTime, lastDiff)
 			default:
-				value, err = h.calcDiff(toFloat64(value), now, toFloat64((*lastStat)[metric.Name]), lastTime)
+				value, err = h.calcDiff(toFloat64(value), now, toFloat64(lastValue), lastTime)
 			}
 			if err != nil {
 				log.Println("OutputValues: ", err)
 				return
 			} else {
-				(*stat)[".last_diff."+metric.Name] = value
+				(*stat)[".last_diff."+fullMetricName] = value
 			}
 		} else {
-			log.Printf("%s does not exist at last fetch\n", metric.Name)
+			log.Printf("%s does not exist at last fetch\n", fullMetricName)
 			return
 		}
 	}
@@ -207,11 +214,7 @@ func (h *MackerelPlugin) formatValues(prefix string, metric Metrics, stat *map[s
 		}
 	}
 
-	if len(prefix) > 0 {
-		h.printValue(os.Stdout, prefix+"."+metric.Name, value, now)
-	} else {
-		h.printValue(os.Stdout, metric.Name, value, now)
-	}
+	h.printValue(os.Stdout, fullMetricName, value, now)
 }
 
 func (h *MackerelPlugin) formatValuesWithWildcard(prefix string, metric Metrics, stat *map[string]interface{}, lastStat *map[string]interface{}, now time.Time, lastTime time.Time) {
